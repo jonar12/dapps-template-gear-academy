@@ -1,7 +1,6 @@
 use gtest::{Log, Program, System};
 use tamagotchi_interaction_io::{TmgAction, TmgEvent};
 
-// TODO: 0️⃣ Copy tests from the previous lesson and push changes to the master branch
 #[test]
 fn smoke_test() {
     let sys = System::new();
