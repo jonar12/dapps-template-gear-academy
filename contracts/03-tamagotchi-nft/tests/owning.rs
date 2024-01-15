@@ -1,3 +1,4 @@
+use gstd::ActorId;
 use gtest::{Log, Program, System};
 use tamagotchi_nft_io::{TmgAction, TmgEvent};
 
@@ -18,7 +19,11 @@ fn smoke_test() {
     assert!(res.contains(&expected_log));
 
     let res = _program.send(2, TmgAction::Age);
-    assert!(!res.log().is_empty());
+    sys.spend_blocks(5);
+    let expected_log = Log::builder()
+        .dest(2)
+        .payload(TmgEvent::Age(5));
+    assert!(res.contains(&expected_log));
 }
 
 #[test]
@@ -53,5 +58,12 @@ fn owning_test() {
     sys.init_logger();
     let _program = Program::current(&sys);
 
+    let test_actor = ActorId::from(4);
+
     // TODO: 6️⃣ Test new functionality
+    let res = _program.send(2, TmgAction::Transfer(test_actor));
+    let expected_log = Log::builder()
+        .dest(2)
+        .payload(TmgEvent::Transferred(test_actor));
+    assert!(res.contains(&expected_log));
 }
