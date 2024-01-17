@@ -18,5 +18,9 @@ fn smoke_test() {
     assert!(res.contains(&expected_log));
 
     let res = _program.send(2, TmgAction::Age);
-    assert!(!res.log().is_empty());
+    sys.spend_blocks(150);
+    let expected_log = Log::builder()
+        .dest(2)
+        .payload(TmgEvent::Age(150));
+    assert!(res.contains(&expected_log));
 }
