@@ -1,6 +1,6 @@
 #![no_std]
 
-use gstd::{debug, exec, msg};
+use gstd::{exec, msg};
 #[allow(unused_imports)]
 use gstd::prelude::*;
 use tamagotchi_interaction_io::{Tamagotchi, TmgAction, TmgEvent};
@@ -20,9 +20,6 @@ extern fn init() {
     // TODO: 5️⃣ Initialize the Tamagotchi program
     let name: String = msg::load()
         .expect("Can't decode the init message");
-
-    debug!("Program was initialized with message {:?}",
-        name);
 
     let tamagotchi = Tamagotchi {
         name: name.clone(),
@@ -58,8 +55,9 @@ extern fn handle() {
             msg::reply(TmgEvent::Name(tmg.name.clone()), 0).expect("Name not loaded correctly");
         }
         TmgAction::Age => {
-            msg::reply(TmgEvent::Age(tmg.date_of_birth.clone()), 0).expect("Age not loaded correctly");
+            msg::reply(TmgEvent::Age(exec::block_timestamp() - tmg.date_of_birth), 0).expect("Age not loaded correctly");
         }
+        // TODO: 5️⃣ Add new logic for calculating the `fed`, `entertained` and `slept` levels
         TmgAction::Feed => {
             tmg.fed -= (exec::block_height() as u64 - tmg.fed_block) * HUNGER_PER_BLOCK;
             tmg.fed += FILL_PER_FEED;
@@ -79,7 +77,7 @@ extern fn handle() {
             msg::reply(TmgEvent::Slept, 0).expect("Not slept correctly");
         }
     }
-    // TODO: 5️⃣ Add new logic for calculating the `fed`, `entertained` and `slept` levels
+
 }
 
 #[no_mangle]
