@@ -1,6 +1,6 @@
 #![no_std]
 
-use gstd::{debug, exec, msg};
+use gstd::{exec, msg};
 #[allow(unused_imports)]
 use gstd::prelude::*;
 use tamagotchi_interaction_io::{Tamagotchi, TmgAction, TmgEvent};
@@ -21,19 +21,16 @@ extern fn init() {
     let name: String = msg::load()
         .expect("Can't decode the init message");
 
-    debug!("Program was initialized with message {:?}",
-        name);
-
     let tamagotchi = Tamagotchi {
         name: name.clone(),
         date_of_birth: exec::block_timestamp(),
-        owner: Default::default(),
+        owner: msg::source(),
         fed: 1,
-        fed_block: 0,
+        fed_block: exec::block_height() as u64,
         entertained: 1,
-        entertained_block: 0,
+        entertained_block: exec::block_height() as u64,
         slept: 1,
-        slept_block: 0,
+        slept_block: exec::block_height() as u64
     };
 
     unsafe {
@@ -58,28 +55,29 @@ extern fn handle() {
             msg::reply(TmgEvent::Name(tmg.name.clone()), 0).expect("Name not loaded correctly");
         }
         TmgAction::Age => {
-            msg::reply(TmgEvent::Age(tmg.date_of_birth.clone()), 0).expect("Age not loaded correctly");
+            msg::reply(TmgEvent::Age(exec::block_timestamp() - tmg.date_of_birth), 0).expect("Age not loaded correctly");
         }
+        // TODO: 5️⃣ Add new logic for calculating the `fed`, `entertained` and `slept` levels
         TmgAction::Feed => {
-            tmg.fed_block = exec::block_timestamp();
-            tmg.fed -= exec::block_height() as u64 * HUNGER_PER_BLOCK;
+            tmg.fed -= (exec::block_height() as u64 - tmg.fed_block) * HUNGER_PER_BLOCK;
             tmg.fed += FILL_PER_FEED;
+            tmg.fed_block = exec::block_height() as u64;
             msg::reply(TmgEvent::Fed, 0).expect("Not fed correctly");
         }
         TmgAction::Entertain => {
-            tmg.entertained_block = exec::block_timestamp();
-            tmg.entertained -= exec::block_height() as u64 * BOREDOM_PER_BLOCK;
+            tmg.entertained -= (exec::block_height() as u64 - tmg.entertained_block) * BOREDOM_PER_BLOCK;
             tmg.entertained += FILL_PER_ENTERTAINMENT;
+            tmg.entertained_block = exec::block_height() as u64;
             msg::reply(TmgEvent::Entertained, 0).expect("Not entertained correctly");
         }
         TmgAction::Sleep => {
-            tmg.slept_block = exec::block_timestamp();
-            tmg.slept -= exec::block_height() as u64 * ENERGY_PER_BLOCK;
+            tmg.slept -= (tmg.slept_block - exec::block_height() as u64) * ENERGY_PER_BLOCK;
             tmg.slept_block += FILL_PER_SLEEP;
+            tmg.slept_block = exec::block_height() as u64;
             msg::reply(TmgEvent::Slept, 0).expect("Not slept correctly");
         }
     }
-    // TODO: 5️⃣ Add new logic for calculating the `fed`, `entertained` and `slept` levels
+
 }
 
 #[no_mangle]
