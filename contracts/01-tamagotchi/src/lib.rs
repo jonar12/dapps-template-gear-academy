@@ -40,7 +40,7 @@ extern fn handle() {
             msg::reply(TmgEvent::Name(tmg.name.clone()), 0).expect("Name not loaded correctly");
         }
         TmgAction::Age => {
-            msg::reply(TmgEvent::Age(tmg.date_of_birth), 0).expect("Age not loaded correctly");
+            msg::reply(TmgEvent::Age(exec::block_timestamp() - tmg.date_of_birth), 0).expect("Age not loaded correctly");
         }
     }
 }
