@@ -129,7 +129,7 @@ async fn main() {
 #[no_mangle]
 extern fn state() {
     let tmg = unsafe {
-        TAMAGOTCHI.as_ref().expect("The contract is not initialized")
+        TAMAGOTCHI.take().expect("The contract is not initialized")
     };
     msg::reply(tmg, 0).expect("Failed to share state");
 }
