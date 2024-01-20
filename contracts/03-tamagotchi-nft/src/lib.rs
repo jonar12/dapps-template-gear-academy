@@ -1,6 +1,6 @@
 #![no_std]
 
-use gstd::{debug, exec, msg};
+use gstd::{exec, msg};
 use gstd::exec::block_timestamp;
 #[allow(unused_imports)]
 use gstd::prelude::*;
@@ -76,9 +76,8 @@ extern fn handle() {
         }
 
         TmgAction::Transfer(new_owner) => {
-            debug!("OWNER: {:?}", tmg.owner);
-            debug!("SOURCE: {:?}", msg::source());
-            if msg::source() != tmg.owner || msg::source() != tmg.approved_account.unwrap() {
+            let source = msg::source();
+            if source != tmg.owner {
                 panic!("Transfer function is only available to the owner of the Tamagotchi or to the approved account");
             }
             tmg.owner = new_owner;

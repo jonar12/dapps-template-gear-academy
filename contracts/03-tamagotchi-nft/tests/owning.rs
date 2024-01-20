@@ -70,15 +70,15 @@ fn owning_test() {
         .payload(TmgEvent::Approved(3.into()));
     assert!(res.contains(&expected_log));
 
-    // let res = _program.send(2, TmgAction::Transfer(4.into()));
-    // let expected_log = Log::builder()
-    //     .dest(2)
-    //     .payload(TmgEvent::Transferred(4.into()));
-    // assert!(res.contains(&expected_log));
-
-    let res = _program.send(2, TmgAction::RevokeApproval);
+    let res = _program.send(2, TmgAction::Transfer(3.into()));
     let expected_log = Log::builder()
         .dest(2)
+        .payload(TmgEvent::Transferred(3.into()));
+    assert!(res.contains(&expected_log));
+
+    let res = _program.send(3, TmgAction::RevokeApproval);
+    let expected_log = Log::builder()
+        .dest(3)
         .payload(TmgEvent::ApprovalRevoked);
     assert!(res.contains(&expected_log));
 }
