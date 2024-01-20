@@ -20,9 +20,6 @@ extern fn init() {
     let name: String = msg::load()
         .expect("Can't decode the init message");
 
-    debug!("Program was initialized with message {:?}",
-        name);
-
     let tamagotchi = Tamagotchi {
         name,
         date_of_birth: block_timestamp(),
@@ -79,6 +76,8 @@ extern fn handle() {
         }
 
         TmgAction::Transfer(new_owner) => {
+            debug!("OWNER: {:?}", tmg.owner);
+            debug!("SOURCE: {:?}", msg::source());
             if msg::source() != tmg.owner || msg::source() != tmg.approved_account.unwrap() {
                 panic!("Transfer function is only available to the owner of the Tamagotchi or to the approved account");
             }

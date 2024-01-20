@@ -56,8 +56,8 @@ pub struct ProgramMetadata;
 impl Metadata for ProgramMetadata {
     type Init = In<String>;
     type Handle = InOut<TmgAction, TmgEvent>;
-    type State = Out<Tamagotchi>;
     type Reply = ();
     type Others = ();
     type Signal = ();
+    type State = Out<Tamagotchi>;
 }

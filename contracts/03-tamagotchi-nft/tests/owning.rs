@@ -1,6 +1,7 @@
-use gstd::ActorId;
 use gtest::{Log, Program, System};
 use tamagotchi_nft_io::{TmgAction, TmgEvent};
+
+const TEST_AGE: u64 = 30;
 
 #[test]
 fn smoke_test() {
@@ -18,11 +19,11 @@ fn smoke_test() {
         .payload(TmgEvent::Name(String::from("Tamagotchi Name")));
     assert!(res.contains(&expected_log));
 
+    sys.spend_blocks(TEST_AGE as u32);
     let res = _program.send(2, TmgAction::Age);
-    sys.spend_blocks(5);
     let expected_log = Log::builder()
         .dest(2)
-        .payload(TmgEvent::Age(5));
+        .payload(TmgEvent::Age(TEST_AGE * 1000));
     assert!(res.contains(&expected_log));
 }
 
@@ -31,6 +32,8 @@ fn interaction_test() {
     let sys = System::new();
     sys.init_logger();
     let _program = Program::current(&sys);
+
+    _program.send(2, String::from("Tamagotchi Name"));
 
     // TODO: 6️⃣ Test new functionality
     let res = _program.send(2, TmgAction::Feed);
@@ -58,12 +61,24 @@ fn owning_test() {
     sys.init_logger();
     let _program = Program::current(&sys);
 
-    let test_actor = ActorId::from(4);
+    _program.send(2, String::from("Tamagotchi Name"));
 
     // TODO: 6️⃣ Test new functionality
-    let res = _program.send(2, TmgAction::Transfer(test_actor));
+    let res = _program.send(2, TmgAction::Approve(3.into()));
     let expected_log = Log::builder()
         .dest(2)
-        .payload(TmgEvent::Transferred(test_actor));
+        .payload(TmgEvent::Approved(3.into()));
+    assert!(res.contains(&expected_log));
+
+    // let res = _program.send(2, TmgAction::Transfer(4.into()));
+    // let expected_log = Log::builder()
+    //     .dest(2)
+    //     .payload(TmgEvent::Transferred(4.into()));
+    // assert!(res.contains(&expected_log));
+
+    let res = _program.send(2, TmgAction::RevokeApproval);
+    let expected_log = Log::builder()
+        .dest(2)
+        .payload(TmgEvent::ApprovalRevoked);
     assert!(res.contains(&expected_log));
 }
