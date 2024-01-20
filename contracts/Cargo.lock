@@ -5739,6 +5739,8 @@ version = "0.3.3"
 dependencies = [
  "gear-wasm-builder",
  "gstd",
+ "sharded-fungible-token-io",
+ "store-io",
  "tamagotchi-shop-io",
 ]
 
@@ -5748,6 +5750,8 @@ version = "0.3.3"
 dependencies = [
  "gmeta",
  "gstd",
+ "sharded-fungible-token-io",
+ "store-io",
 ]
 
 [[package]]
