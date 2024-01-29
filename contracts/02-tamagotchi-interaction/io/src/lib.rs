@@ -45,7 +45,6 @@ pub enum TmgEvent {
 
 pub struct ProgramMetadata;
 
-// TODO: 4️⃣ Fill `Init`, `Handle`, and `State` types
 impl Metadata for ProgramMetadata {
     type Init = In<String>;
     type Handle = InOut<TmgAction, TmgEvent>;
