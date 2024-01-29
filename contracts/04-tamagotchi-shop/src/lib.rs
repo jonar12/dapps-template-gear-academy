@@ -123,7 +123,6 @@ async fn main() {
             msg::reply(TmgEvent::AttributeBought(attribute_id), 0).expect("Error in replying to BuyAttribute Action");
         }
     }
-
 }
 
 #[no_mangle]
