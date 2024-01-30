@@ -54,7 +54,6 @@ extern fn handle() {
         TmgAction::Age => {
             msg::reply(TmgEvent::Age(exec::block_timestamp() - tmg.date_of_birth), 0).expect("Age not loaded correctly");
         }
-        // TODO: 5️⃣ Add new logic for calculating the `fed`, `entertained` and `slept` levels
         TmgAction::Feed => {
             tmg.fed -= (exec::block_height() as u64 - tmg.fed_block) * HUNGER_PER_BLOCK;
             tmg.fed += FILL_PER_FEED;
