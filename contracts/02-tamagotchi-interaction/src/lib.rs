@@ -5,7 +5,6 @@ use gstd::{exec, msg};
 use gstd::prelude::*;
 use tamagotchi_interaction_io::{Tamagotchi, TmgAction, TmgEvent};
 
-// TODO: 4️⃣ Define constants
 const HUNGER_PER_BLOCK: u64 = 1;
 const BOREDOM_PER_BLOCK: u64 = 2;
 const ENERGY_PER_BLOCK: u64 = 2;
@@ -17,7 +16,6 @@ static mut TAMAGOTCHI: Option<Tamagotchi> = None;
 
 #[no_mangle]
 extern fn init() {
-    // TODO: 5️⃣ Initialize the Tamagotchi program
     let name: String = msg::load()
         .expect("Can't decode the init message");
 
@@ -45,7 +43,6 @@ extern fn init() {
 
 #[no_mangle]
 extern fn handle() {
-    // TODO: 0️⃣ Copy the `handle` function from the previous lesson and push changes to the master branch
     let input_msg = msg::load().expect("Error in loading Tmg Input Message");
     let tmg = unsafe {
         TAMAGOTCHI.as_mut().expect("The contract is not initialized")
@@ -57,7 +54,6 @@ extern fn handle() {
         TmgAction::Age => {
             msg::reply(TmgEvent::Age(exec::block_timestamp() - tmg.date_of_birth), 0).expect("Age not loaded correctly");
         }
-        // TODO: 5️⃣ Add new logic for calculating the `fed`, `entertained` and `slept` levels
         TmgAction::Feed => {
             tmg.fed -= (exec::block_height() as u64 - tmg.fed_block) * HUNGER_PER_BLOCK;
             tmg.fed += FILL_PER_FEED;
@@ -82,7 +78,6 @@ extern fn handle() {
 
 #[no_mangle]
 extern fn state() {
-    // TODO: 0️⃣ Copy the `handle` function from the previous lesson and push changes to the master branch
     let tmg = unsafe {
         TAMAGOTCHI.as_ref().expect("The contract is not initialized")
     };
